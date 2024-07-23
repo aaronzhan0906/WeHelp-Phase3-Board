@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector(".postForm");
-    const mainContainer = document.querySelector(".main");
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -17,19 +16,29 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const result = await response.json();
-            console.log("Post created");
-
+            console.log(result);
             form.reset();
-
-            addNewPost();
+            window.location.reload();
         } catch (error) {
             console.error("Error:", error);
         }
     });
 
-    function addNewPost(post){
-        const postElement = createPostElement(post);
-        mainContainer.insertBefore(postElement, mainContainer.querySelector("hr").nextSibling);
+    async function loadInitialPosts() {
+        try {
+            const response = await fetch("/api/board");
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const posts = await response.json();
+            const mainContainer = document.querySelector(".main");
+            posts.forEach(post => {
+                const postElement = createPostElement(post);
+                mainContainer.insertBefore(postElement, mainContainer.querySelector("hr").nextSibling);
+            });
+        } catch (error) {
+            console.error("Error:", error);
+        }
     }
 
     function createPostElement(post){
@@ -40,13 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
         content.className = "post__content";
         content.textContent = post.text;
         postDiv.appendChild(content);
-    
 
         if (post.image_path) {
             const image = document.createElement("img");
             image.className = "post__image";
             image.src = post.image_path;
-            image.alt = "圖片"
+            image.alt = "圖片";
             postDiv.appendChild(image);
         }
         
@@ -56,18 +64,5 @@ document.addEventListener("DOMContentLoaded", () => {
         return postDiv;
     }
 
-    async function loadInitialPosts() {
-        try {
-            const response = await fetch("/api/board");
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const posts = await response.json();
-            posts.forEach(post => addNewPost(post));
-    } catch (error) {
-        console.error("Error:", error)
-    }}
-    loadInitialPosts()
+    loadInitialPosts();
 });
-
-
