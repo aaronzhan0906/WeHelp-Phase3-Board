@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./index.css">
+    <title>Board</title>
+</head>
+<body>
+    <div class="main">
+    <h2>發表一篇圖文</h2>
+        <form class="postForm">
+            <div class="postForm__text">
+                <label for="text">文字內容：</label>
+                <input type="text" class="postForm__text--input" name="content" placeholder="選擇一張圖片後送出" required>
+            </div>
+            <div class="postForm__image">
+                <label for="image">圖片檔案：</label>
+                <input type="file" class="postForm__upload" name="image" accept="image/*">
+            </div>
+            <button type="submit">送出</button>
+        </form>
+        <hr>
+        <!-- <div class="post">
+            <p class="post__content">這是一條留言</p>
+            <img class="post__image" src="https://www.travel.taipei/d_upload_ttn/sceneadmin/pic/11003130.jpg" alt="圖片">
+            <hr>
+        </div> -->
+    </div> 
+    <script src="script.js"></script>
+</body>
+</html>

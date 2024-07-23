@@ -1,0 +1,30 @@
+{
+  "name": "wehelp-phase3-board",
+  "version": "1.0.0",
+  "description": "WeHelp Phase 3 Message Board Project",
+  "main": "app/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon app/index.js",
+    "start": "node app/index.js"
+  },
+  "keywords": [
+    "wehelp",
+    "message board",
+    "express",
+    "mysql"
+  ],
+  "author": "ChengTing",
+  "license": "ISC",
+  "dependencies": {
+    "config": "^3.3.12",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.10.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
