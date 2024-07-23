@@ -4,8 +4,21 @@ import multer from "multer";
 import path from "path";
 import config from "../config.js";
 
+// S3 Client setup
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+const s3Client = new S3Client({
+    region: config.s3.region,
+    credentials: {
+        accessKeyId: config.s3.accessKeyId,
+        secretAccessKey: config.s3.secretAccessKey
+    }
+});
+
+
 const app = express();
 const databasePool = mysql.createPool(config.db);
+
 
 // file upload
 const fileStorage = multer.diskStorage({
@@ -17,12 +30,15 @@ const fileStorage = multer.diskStorage({
       callback(null, uniqueFileName);
     }
 });
-const fileUpload = multer({storage: fileStorage});
+
+
+// use memory storage
+const fileUpload = multer({ storage: multer.memoryStorage()})
 
 // middleware
 app.use(express.json());
 app.use(express.static("web"));
-app.use(express.static("uploads"));
+
 
 // Post //
 app.post("/api/board", (request, response, next) => {    
@@ -41,15 +57,28 @@ app.post("/api/board", (request, response, next) => {
 }, async (request, response) => {
     try {
         const message_board = request.body.content;
-        let imageFilePath = null;
-        console.log(imageFilePath)
+        let imageUrl = null;
+
         if (request.file) {
-            imageFilePath = `/uploads/${request.file.filename}`;
+            const fileExtension = path.extname(request.file.originalname);
+            const fileName = `${Date.now()}${fileExtension}`;
+
+            // upload to S3
+            const params = {
+                Bucket: config.s3.bucket,
+                Key: `wehelp-phase3-board/${fileName}`,
+                Body: request.file.buffer,
+                ContentType: request.file.mimetype,
+            };
+            const command = new PutObjectCommand(params);
+            await s3Client.send(command);
+
+            imageUrl = `https://${config.s3.bucket}.s3.${config.s3.region}.amazonaws.com/wehelp-phase3-board/${fileName}`;
         }
-        
+
         const [queryResult] = await databasePool.query(
             "INSERT INTO messages (text, image_path) VALUES (?, ?)",
-            [message_board, imageFilePath]
+            [message_board, imageUrl]
         );
 
         response.status(201).json({
@@ -61,6 +90,8 @@ app.post("/api/board", (request, response, next) => {
         response.status(500).json({message: "Error posting message"});
     }
 });
+
+
 
 // Get //
 app.get("/api/board", async (request, response) => {
