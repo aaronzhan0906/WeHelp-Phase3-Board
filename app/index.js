@@ -1,4 +1,4 @@
-import express, { application } from "express";
+import express from "express";
 import mysql from "mysql2/promise";
 import multer from "multer";
 import path from "path";
