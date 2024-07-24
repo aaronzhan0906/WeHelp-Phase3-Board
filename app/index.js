@@ -3,6 +3,8 @@ import mysql from "mysql2/promise";
 import multer from "multer";
 import path from "path";
 import config from "../config.js";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 // S3 Client setup
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
@@ -18,6 +20,14 @@ const s3Client = new S3Client({
 
 const app = express();
 const databasePool = mysql.createPool(config.db);
+
+// board
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+app.get('/board', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'static', 'index.html'));
+});
 
 
 // file upload
@@ -37,7 +47,7 @@ const fileUpload = multer({ storage: multer.memoryStorage()})
 
 // middleware
 app.use(express.json());
-app.use(express.static("web"));
+app.use(express.static("static"));
 
 
 // Post //
@@ -96,7 +106,7 @@ app.post("/api/board", (request, response, next) => {
 // Get //
 app.get("/api/board", async (request, response) => {
     try {
-        const [messages] = await databasePool.query("SELECT * FROM messages ORDER BY created_at DESC");
+        const [messages] = await databasePool.query("SELECT * FROM messages ORDER BY created_at ASC");
         response.json(messages);
     } catch (error){
         console.error("Error fetching messages:", error);
