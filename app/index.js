@@ -73,7 +73,7 @@ app.post("/api/board", (request, response, next) => {
             const command = new PutObjectCommand(params);
             await s3Client.send(command);
 
-            imageUrl = `https://${config.s3.bucket}.s3.${config.s3.region}.amazonaws.com/wehelp-phase3-board/${fileName}`;
+            imageUrl = `https://dqnrdfgdkhgah.cloudfront.net/wehelp-phase3-board/${fileName}`;
         }
 
         const [queryResult] = await databasePool.query(
